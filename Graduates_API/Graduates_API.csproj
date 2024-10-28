@@ -28,6 +28,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Graduates_Data\Graduates_Data.csproj" />
     <ProjectReference Include="..\Graduates_Model\Graduates_Model.csproj" />
+    <ProjectReference Include="..\Graduates_Service\Graduates_Service.csproj" />
+    <ProjectReference Include="..\Graduates_Utility\Graduates_Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>

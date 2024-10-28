@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Graduates_API\Graduates_API.csproj" />
     <ProjectReference Include="..\Graduates_Data\Graduates_Data.csproj" />
     <ProjectReference Include="..\Graduates_Model\Graduates_Model.csproj" />
   </ItemGroup>
