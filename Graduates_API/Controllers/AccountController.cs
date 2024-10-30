@@ -1,5 +1,6 @@
 ﻿using Graduates_Model.Model;
 using Graduates_Service.Services.Dto;
+using Graduates_Service.Services.Repositry.IRepositry;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +10,15 @@ namespace TestRestApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : Controller
     {
-        public AccountController(UserManager<ApplicantUser> userManager, IConfiguration configuration)
+        public AccountController(UserManager<ApplicantUser> userManager, IUnityofWork UnityofWork)
         {
             _userManager = userManager;
-            _configuration = configuration;
+            _UnityofWork = UnityofWork;
         }
         private readonly UserManager<ApplicantUser> _userManager;
-        private readonly IConfiguration _configuration;
+        private readonly IUnityofWork _UnityofWork;
 
         /// <summary>
         /// Get All Data
@@ -26,8 +27,8 @@ namespace TestRestApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllItems()
         {
-            var Items = await _userManager.Users.ToListAsync();
-            return Ok(Items);
+            List<ApplicantUser> objApplicantUserList = _UnityofWork.ApplicantRepositry.GetAll().ToList();
+            return Ok(objApplicantUserList);
         }
 
         [HttpPost("Register")]
@@ -48,7 +49,7 @@ namespace TestRestApi.Controllers
 
                 if (IsStrongPasswords(registerUser.ApplicantPassword))
                 {
-                     Result = await _userManager.CreateAsync(appUser, registerUser.ApplicantPassword);
+                    Result = await _userManager.CreateAsync(appUser, registerUser.ApplicantPassword);
                 }
                 else
                 {
