@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Graduates_Utility;
+using System.ComponentModel.DataAnnotations;
 
 namespace Graduates_Service.Services.Dto
 {
@@ -10,15 +11,15 @@ namespace Graduates_Service.Services.Dto
         public string? ApplicantPhoneNumber { get; set; }
         public string? ApplicantEmail { get; set; }
         public string? ApplicantPassword { get; set; }
-        public string? ApplicantType { get; set; }
+        public StudentType ApplicantType { get; set; }
     }
     // For Login
     public class ApplicantLogin
     {
         [Required]
-        public string ApplicantUserName { get; set; }
+        public string? ApplicantUserName { get; set; }
 
         [Required]
-        public string ApplicantPassword { get; set; }
+        public string? ApplicantPassword { get; set; }
     }
 }

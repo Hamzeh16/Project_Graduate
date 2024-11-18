@@ -4,6 +4,7 @@ using Graduates_Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Graduates_Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241116122044_InsertDataRole")]
+    partial class InsertDataRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,24 +54,17 @@ namespace Graduates_Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "09084478-51a6-4e75-b166-5f9f5e6f8632",
+                            Id = "d0a3dff9-6ba1-4433-8560-651dd74e1f45",
                             ConcurrencyStamp = "1",
                             Name = "Admin",
                             NormalizedName = "Admin"
                         },
                         new
                         {
-                            Id = "b6be7c34-b4a2-48c8-9a38-ad06113739c3",
+                            Id = "693c2c77-8688-482a-831b-81822da01f23",
                             ConcurrencyStamp = "2",
                             Name = "Company",
                             NormalizedName = "Company"
-                        },
-                        new
-                        {
-                            Id = "dabadc51-85e5-4bbd-a155-1550f7490217",
-                            ConcurrencyStamp = "3",
-                            Name = "Student",
-                            NormalizedName = "Student"
                         });
                 });
 

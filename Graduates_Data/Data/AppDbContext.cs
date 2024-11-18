@@ -2,11 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Graduates_Data.Data
 {
@@ -20,5 +15,22 @@ namespace Graduates_Data.Data
         /// Applicant User Table
         /// </summary>
         public DbSet<ApplicantUser> ApplicantsUser { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            SeedRoles(builder);
+        }
+
+        private static void SeedRoles(ModelBuilder builder)
+        {
+            builder.Entity<IdentityRole>().HasData
+                (
+            new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "Admin" },
+            new IdentityRole() { Name = "Company", ConcurrencyStamp = "2", NormalizedName = "Company" },
+            new IdentityRole() { Name = "Student", ConcurrencyStamp = "3", NormalizedName = "Student" }
+                );
+        }
     }
 }

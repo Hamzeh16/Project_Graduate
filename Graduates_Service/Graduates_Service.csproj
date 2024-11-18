@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Graduates_Data\Graduates_Data.csproj" />
     <ProjectReference Include="..\Graduates_Model\Graduates_Model.csproj" />
   </ItemGroup>
