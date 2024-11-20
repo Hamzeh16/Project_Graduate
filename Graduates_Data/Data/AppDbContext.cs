@@ -16,6 +16,11 @@ namespace Graduates_Data.Data
         /// </summary>
         public DbSet<ApplicantUser> ApplicantsUser { get; set; }
 
+        /// <summary>
+        /// Traning Table
+        /// </summary>
+        public DbSet<Traning> Traning { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

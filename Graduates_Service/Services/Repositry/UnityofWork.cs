@@ -12,11 +12,14 @@ namespace Graduates_Service.Services.Repositry
     {
         private AppDbContext _db;
         public IApplicantRepositry ApplicantRepositry { get; set; }
+        public ITraningRepositry TrainingRepositry { get; set; }
 
         public UnityofWork(AppDbContext db)
         {
             _db = db;
             ApplicantRepositry = new ApplicantRepositry(_db);
+            TrainingRepositry = new Training(_db);
+
         }
         public void Save()
         {

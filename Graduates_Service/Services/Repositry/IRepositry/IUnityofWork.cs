@@ -10,6 +10,7 @@ namespace Graduates_Service.Services.Repositry.IRepositry
     {
         #region Add Table To Action CRUD (Create , Update , Delete)
         public IApplicantRepositry ApplicantRepositry { get; set; }
+        public ITraningRepositry TrainingRepositry { get; set; }
 
         #endregion
 
