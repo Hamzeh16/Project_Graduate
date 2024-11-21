@@ -4,18 +4,18 @@ using Graduates_Service.Services.Repositry.IRepositry;
 
 namespace Graduates_Service.Services.Repositry
 {
-    public class Training : Repostry<Traning>, ITraningRepositry
+    public class JobRepositry : Repostry<Job>, IJob
     {
         private AppDbContext _db;
-        public Training(AppDbContext db) : base(db)
+        public JobRepositry(AppDbContext db) : base(db)
         {
             _db = db;
         }
 
-        public void Update(Traning obj)
+        public void Update(Job obj)
         {
-            _db.Traning.Update(obj);
+            // _db.Job.Update(obj);
+            _db.Job.Update(obj);
         }
     }
 }
-

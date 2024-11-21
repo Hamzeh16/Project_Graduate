@@ -21,11 +21,15 @@ namespace Graduates_Data.Data
         /// </summary>
         public DbSet<Traning> Traning { get; set; }
 
+        /// <summary>
+        /// Job Table
+        /// </summary>
+        public DbSet<Job> Job { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            SeedRoles(builder);
+           // SeedRoles(builder);
         }
 
         private static void SeedRoles(ModelBuilder builder)

@@ -2,7 +2,7 @@
 
 namespace Graduates_Model.Model
 {
-    public class Traning
+    public class Job
     {
         [Key]
         public int ID { get; set; }
@@ -16,12 +16,9 @@ namespace Graduates_Model.Model
         [StringLength(50)]
         public string? Location { get; set; }
 
-        [Range(0, float.MaxValue)]
-        public float TrainCost { get; set; }
+        [StringLength(100)]
+        public string? Qalification { get; set; }
 
-        [StringLength(50)]
-        public string? TrainPeriod { get; set; }
+        public DateTime? JobDeadLine { get; set; }
     }
 }
-
-

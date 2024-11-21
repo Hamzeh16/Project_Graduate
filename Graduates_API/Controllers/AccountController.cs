@@ -3,7 +3,12 @@ using Graduates_Service.Services.Dto;
 using Graduates_Service.Services.Repositry.IRepositry;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Text.RegularExpressions;
+using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames;
 
 namespace TestRestApi.Controllers
 {
@@ -12,17 +17,20 @@ namespace TestRestApi.Controllers
     public class AccountController : ControllerBase
     {
         public AccountController(UserManager<ApplicantUser> userManager,
-            IUnityofWork UnityofWork, IEmailService emailService, RoleManager<IdentityRole> roleManager)
+            IUnityofWork UnityofWork, IEmailService emailService,
+            RoleManager<IdentityRole> roleManager, IConfiguration config)
         {
             _userManager = userManager;
             _emailService = emailService;
             _UnityofWork = UnityofWork;
             _roleManager = roleManager;
+            _config = config;
         }
         private readonly UserManager<ApplicantUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
         private readonly IUnityofWork _UnityofWork;
+        private readonly IConfiguration _config;
 
         /// <summary>
         /// Get All Data
@@ -114,26 +122,46 @@ namespace TestRestApi.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> LoginUser(ApplicantLogin loginUser)
         {
-            if (ModelState.IsValid)
+
+            ApplicantUser? user = await _userManager.FindByNameAsync(loginUser.ApplicantUserName);
+
+            if (user != null && await _userManager.CheckPasswordAsync(user, loginUser.ApplicantPassword))
             {
-                ApplicantUser? user = await _userManager.FindByNameAsync(loginUser.ApplicantUserName);
-                if (user != null)
+                var authClaim = new List<Claim>
                 {
-                    if (await _userManager.CheckPasswordAsync(user, loginUser.ApplicantPassword))
-                    {
-                        return Ok("Sucsess");
-                    }
-                    else
-                    {
-                        return Unauthorized();
-                    }
-                }
-                else
+                    new Claim(ClaimTypes.Name,user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+                var userRole = await _userManager.GetRolesAsync(user);
+                foreach(var role in userRole)
                 {
-                    ModelState.AddModelError("", "Invald User Name");
+                    authClaim.Add(new Claim(ClaimTypes.Role, role));
                 }
+                
+                var JwtToken = GetToken(authClaim);
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(JwtToken),
+                    expiration = JwtToken.ValidTo
+                });
             }
-            return BadRequest();
+
+            return Unauthorized();
+        }
+
+        private JwtSecurityToken GetToken(List<Claim> authClaim)
+        {
+            var authSignKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"]));
+
+            var token = new JwtSecurityToken(
+                issuer: _config["JWT:ValidIssuer"],
+                audience: _config["JWT:ValidAudience"],
+                expires: DateTime.Now.AddHours(1),
+                claims:authClaim,
+                signingCredentials: new SigningCredentials(authSignKey, SecurityAlgorithms.HmacSha256));
+
+            return token;
         }
 
         [HttpGet("SentEmail")]
@@ -164,7 +192,7 @@ namespace TestRestApi.Controllers
                         new Respone { Status = "Succes", Message = "Email Verifiey Succesfully" });
                 }
             }
- 
+
             return StatusCode(StatusCodes.Status500InternalServerError,
                   new Respone() { Status = "Erorr", Message = "User Doesn't exists!" });
         }
