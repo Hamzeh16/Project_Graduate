@@ -17,5 +17,11 @@ namespace Graduates_Service.Services.Repositry
             // _db.Job.Update(obj);
             _db.Job.Update(obj);
         }
+
+        public IQueryable<Job> GetByID(int id)
+        {
+            var Data = _db.Job.Where(x => x.ID == id);
+            return Data;
+        }
     }
 }

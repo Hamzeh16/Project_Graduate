@@ -94,13 +94,13 @@ namespace Graduates_API.Controllers
         //[HttpDelete]
         //public async Task<IActionResult> DeleteItems(int ID)
         //{
-        //var Item = await _db.Items.SingleOrDefaultAsync(x => x.ID == ID);
-        //if (Item == null)
-        //{
-        //    return NotFound($"Item id {ID} Not Exist");
-        //}
-        //_UnityofWork.TrainingRepositry.Remove(Item);
-        //     _UnityofWork.Save();
+        //    var Item = await _UnityofWork.TrainingRepositry.Get(ID);
+        //    if (Item == null)
+        //    {
+        //        return NotFound($"Item id {ID} Not Exist");
+        //    }
+        //    _UnityofWork.TrainingRepositry.Remove(Item);
+        //    _UnityofWork.Save();
         //    return Ok(Item);
         //}
     }

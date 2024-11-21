@@ -16,6 +16,12 @@ namespace Graduates_Service.Services.Repositry
         {
             _db.Traning.Update(obj);
         }
+
+        public IQueryable<Traning> GetByID(int id)
+        {
+            var data = _db.Traning.Where(x => x.ID == id);
+            return data;
+        }
     }
 }
 
