@@ -2,7 +2,7 @@
 
 namespace Graduates_Model.Model
 {
-    public class Traning
+    public class    Traning
     {
         [Key]
         public int ID { get; set; }
@@ -32,10 +32,6 @@ namespace Graduates_Model.Model
         public float TrainCost { get; set; }
 
         [StringLength(50)]
-        public string? Email { get; set; }
-
-
+        public string? EmailTraining { get; set; }
     }
 }
-
-

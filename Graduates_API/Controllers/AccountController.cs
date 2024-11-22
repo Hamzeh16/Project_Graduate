@@ -32,17 +32,6 @@ namespace TestRestApi.Controllers
         private readonly IUnityofWork _UnityofWork;
         private readonly IConfiguration _config;
 
-        /// <summary>
-        /// Get All Data
-        /// </summary>
-        /// <returns></returns>
-        //[HttpGet]
-        //public IActionResult GetAllItems()
-        //{
-        //    List<ApplicantUser> objApplicantUserList = _UnityofWork.ApplicantRepositry.GetAll().ToList();
-        //    return Ok(objApplicantUserList);
-        //}
-
         [HttpPost("Register")]
         public async Task<IActionResult> RegisterNewUser([FromBody] ApplicantDto registerUser, string role)
         {
@@ -68,8 +57,9 @@ namespace TestRestApi.Controllers
                     UserName = registerUser.ApplicantName,
                     Email = registerUser.ApplicantEmail,
                     PhoneNumber = registerUser.ApplicantPhoneNumber,
-                    //STUDENTID = registerUser.ApplicantIDNumber,
-                    //STYDENTTYPE = registerUser.ApplicantType,
+                    STUDENTID = registerUser.ApplicantIDNumber,
+                    APPLICANTTYPE = registerUser.ApplicantType,
+                    IMAGEURL = registerUser.ImageUrl
                 };
 
                 IdentityResult Result = new IdentityResult();
@@ -92,18 +82,17 @@ namespace TestRestApi.Controllers
                         return StatusCode(StatusCodes.Status500InternalServerError,
                                      new Respone() { Status = "Erorr", Message = "User Faild To Created!" });
                     }
+                    
                     // Assigen a Role
                     await _userManager.AddToRoleAsync(appUser, role);
-
+                    
                     // Add Token To Verifiy Email
                     var token = _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+                    
                     // Generate confirmation link
                     var ConfirmLinks = Url.Action("ConfirmEmail", "Authentication", new { token, email = appUser.Email }, Request.Scheme);
-                    //var ConfirmLink = Url.Action(nameof(ConfirmEmail), "Authentication", new { token, email = appUser.Email }, Request.Scheme);
-                    //var ConfirmLink = $"{Request.Scheme}://{Request.Host}/Authentication/ConfirmEmail?token={token}&email={appUser.Email}";
                     var ConfirmLink = $"{Request.Scheme}://{Request.Host}/api/Account/ConfirmEmail?token={Uri.EscapeDataString(await token)}&email={Uri.EscapeDataString(appUser.Email)}";
 
-                    //var ConfirmLink = $"{Request.Scheme}://{Request.Host}/ConfirmEmail?token={token}&email={appUser.Email}";
                     var message = new Messsage([appUser.Email], subject: "Confirm Email Link", content: ConfirmLink!);
                     _emailService.SendEmail(message);
 

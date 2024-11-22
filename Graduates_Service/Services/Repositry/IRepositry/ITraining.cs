@@ -9,7 +9,5 @@ namespace Graduates_Service.Services.Repositry.IRepositry
         /// </summary>
         /// <param name="TraningObj"></param>
         void Update(Traning TraningObj);
-
-        IQueryable<Traning> GetByID(int id);
     }
 }

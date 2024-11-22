@@ -20,7 +20,7 @@ namespace Graduates_Model.Model
         public string? Location { get; set; }
 
         [StringLength(50)]
-        public string? Email { get; set; }
+        public string? EmailJob { get; set; }
 
         [StringLength(100)]
         public string? Qalification { get; set; }

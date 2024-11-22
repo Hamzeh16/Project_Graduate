@@ -1,8 +1,6 @@
 ﻿using Graduates_Model.Model;
-using Graduates_Service.Services.Repositry;
 using Graduates_Service.Services.Repositry.IRepositry;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace Graduates_API.Controllers
 {
@@ -33,7 +31,7 @@ namespace Graduates_API.Controllers
         /// </summary>
         /// <param name="ItemDto"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<IActionResult> AddItems([FromForm] Job ItemDto)
         {
             //using var stream = new MemoryStream();
@@ -44,9 +42,9 @@ namespace Graduates_API.Controllers
                 CompanyName = ItemDto.Description,
                 Description = ItemDto.CompanyName,
                 Location = ItemDto.Location,
-                Email = ItemDto.Email,
-                Qalification =ItemDto.Qalification,
-                JobDeadLine = ItemDto.JobDeadLine,
+                EmailJob = ItemDto.EmailJob,
+                Qalification = ItemDto.Qalification,
+                JobDeadLine = DateTime.Now
                 //CategoryID = ItemDto.CategoryID,
                 //Image = stream.ToArray()
             };
@@ -61,35 +59,25 @@ namespace Graduates_API.Controllers
         /// <param name = "ID" ></ param >
         /// < param name="ITEMDTO"></param>
         /// <returns></returns>
-        [HttpPut("{ID}")]
+        [HttpPut("Update")]
         public async Task<IActionResult> UpdateItems(int ID, [FromForm] Job ITEMDTO)
         {
-            var Item = _UnityofWork.JobRepositry.GetByID(ID);
-            if (Item == null)
+            Job? job = _UnityofWork.JobRepositry.Get(c => c.ID == ID);
+            if (job == null)
             {
                 return NotFound($"Item id {ID} Not Exist");
             }
-            //var IsExistCategoty = _db.Categories.AnyAsync(x => x.ID == ITEMDTO.CategoryID);
-            //if (IsExistCategoty == null)
-            //{
-            //    return NotFound($"Category id {ID} Not Exist");
-            //}
-            //if (Item.Image != null)
-            //{
-            //    using var stream = new MemoryStream();
-            //    await ITEMDTO.Image.CopyToAsync(stream);
-            //    Item.Image = stream.ToArray();
-            //}
-                //Title = ItemDto.Title,
-                //CompanyName = ItemDto.Description,
-                //Description = ItemDto.CompanyName,
-                //Location = ItemDto.Location,
-                //Email = ItemDto.Email,
-                //Qalification = ItemDto.Qalification,
-                //JobDeadLine = ItemDto.JobDeadLine,
-                
-        _UnityofWork.Save();
-            return Ok(Item);
+
+            job.Title = ITEMDTO.Title;
+            job.CompanyName = ITEMDTO.Description;
+            job.Description = ITEMDTO.CompanyName;
+            job.Location = ITEMDTO.Location;
+            job.EmailJob = ITEMDTO.EmailJob;
+            job.Qalification = ITEMDTO.Qalification;
+            job.JobDeadLine = ITEMDTO.JobDeadLine;
+
+            _UnityofWork.Save();
+            return Ok(job);
         }
 
         /// <summary>
@@ -97,19 +85,17 @@ namespace Graduates_API.Controllers
         /// </summary>
         /// <param name = "ID" ></ param >
         /// < returns ></ returns >
-        //[HttpDelete]
-        //public async Task<IActionResult> DeleteItems(int ID)
-        //{
-        //    var Item =  _UnityofWork.JobRepositry.GetByID(ID);
-        //    if (Item == null)
-        //    {
-        //        return NotFound($"Item id {ID} Not Exist");
-        //    }
-        //    _UnityofWork.JobRepositry.Remove(Item);
-        //    _UnityofWork.Save();
-        //    return Ok(Item);
-        //}
+        [HttpDelete("Delete")]
+        public async Task<IActionResult> DeleteItems(int ID)
+        {
+            Job? job = _UnityofWork.JobRepositry.Get(c => c.ID == ID);
+            if (job == null)
+            {
+                return NotFound($"Item id {ID} Not Exist");
+            }
+            _UnityofWork.JobRepositry.Remove(job);
+            _UnityofWork.Save();
+            return Ok(job);
+        }
     }
-
 }
-

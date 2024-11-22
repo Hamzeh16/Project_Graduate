@@ -9,7 +9,5 @@ namespace Graduates_Service.Services.Repositry.IRepositry
         /// </summary>
         /// <param name="jobObj"></param>
         void Update(Job jobObj);
-
-        IQueryable<Job> GetByID(int id);
     }
 }

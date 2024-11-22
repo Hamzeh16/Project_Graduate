@@ -11,7 +11,6 @@ namespace Graduates_API.Controllers
         public TraningController(IUnityofWork UnityofWork)
         {
             _UnityofWork = UnityofWork;
-
         }
         private readonly IUnityofWork _UnityofWork;
 
@@ -57,59 +56,48 @@ namespace Graduates_API.Controllers
         /// <summary>
         /// Update Data
         /// </summary>
-        /// <param name="ID"></param>
-        /// <param name="ITEMDTO"></param>
+        /// <param name = "ID" ></ param >
+        /// < param name="ITEMDTO"></param>
         /// <returns></returns>
-        //[HttpPut("{ID}")]
-        //public async Task<IActionResult> UpdateItems(int ID, [FromForm] Traning ITEMDTO)
-        //{
-        //var Item = await _db.Items.FindAsync(ID);
-        //if (Item == null)
-        //{
-        //    return NotFound($"Item id {ID} Not Exist");
-        //}
-        //var IsExistCategoty = _db.Categories.AnyAsync(x => x.ID == ITEMDTO.CategoryID);
-        //if (IsExistCategoty == null)
-        //{
-        //    return NotFound($"Category id {ID} Not Exist");
-        //}
-        //if (Item.Image != null)
-        //{
-        //    using var stream = new MemoryStream();
-        //    await ITEMDTO.Image.CopyToAsync(stream);
-        //    Item.Image = stream.ToArray();
-        //}
-        //       Title = ItemDto.Title,
-        //        CompanyName = ItemDto.Description,
-        //        Description = ItemDto.CompanyName,
-        //        Location = ItemDto.Location,
-        //        skillRequired = ItemDto.skillRequired,
-        //        TrainPeriod = ItemDto.TrainPeriod,
-        //        applicDeadLine = ItemDto.applicDeadLine,
-        //        TrainCost = ItemDto.TrainCost,
-                //CategoryID = ItemDto.CategoryID,
-                //Image = stream.ToArray()
+        [HttpPut("Update")]
+        public async Task<IActionResult> UpdateItems(int ID, [FromForm] Traning TRAINDTO)
+        {
+            Traning? traning = _UnityofWork.TrainingRepositry.Get(c => c.ID == ID);
+            if (traning == null)
+            {
+                return NotFound($"Item id {ID} Not Exist");
+            }
 
-        //_UnityofWork.Save();
-        //return Ok(Item);
-        //}
+            traning.Title = TRAINDTO.Title;
+            traning.CompanyName = TRAINDTO.Description;
+            traning.Description = TRAINDTO.CompanyName;
+            traning.Location = TRAINDTO.Location;
+            traning.skillRequired = TRAINDTO.skillRequired;
+            traning.applicDeadLine = TRAINDTO.applicDeadLine;
+            traning.TrainPeriod = TRAINDTO.TrainPeriod;
+            traning.TrainCost = TRAINDTO.TrainCost;
+            traning.EmailTraining = TRAINDTO.EmailTraining;
+
+            _UnityofWork.Save();
+            return Ok(traning);
+        }
 
         /// <summary>
         /// Delete Data
         /// </summary>
-        /// <param name="ID"></param>
-        /// <returns></returns>
-        //[HttpDelete]
-        //public async Task<IActionResult> DeleteItems(int ID)
-        //{
-        //    var Item = await _UnityofWork.TrainingRepositry.Get(ID);
-        //    if (Item == null)
-        //    {
-        //        return NotFound($"Item id {ID} Not Exist");
-        //    }
-        //    _UnityofWork.TrainingRepositry.Remove(Item);
-        //    _UnityofWork.Save();
-        //    return Ok(Item);
-        //}
+        /// <param name = "ID" ></ param >
+        /// < returns ></ returns >
+        [HttpDelete("Delete")]
+        public async Task<IActionResult> DeleteItems(int ID)
+        {
+            Traning? traning = _UnityofWork.TrainingRepositry.Get(c => c.ID == ID);
+            if (traning == null)
+            {
+                return NotFound($"Item id {ID} Not Exist");
+            }
+            _UnityofWork.TrainingRepositry.Remove(traning);
+            _UnityofWork.Save();
+            return Ok(traning);
+        }
     }
 }
