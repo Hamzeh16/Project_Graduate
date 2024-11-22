@@ -38,11 +38,14 @@ namespace Graduates_API.Controllers
             //await ItemDto.Image.CopyToAsync(stream);
             var item = new Traning
             {
-                CompanyName = ItemDto.CompanyName,
-                Description = ItemDto.Description,
+                Title = ItemDto.Title,
+                CompanyName = ItemDto.Description,
+                Description = ItemDto.CompanyName,
                 Location = ItemDto.Location,
-                TrainCost = ItemDto.TrainCost,
+                skillRequired = ItemDto.skillRequired,
                 TrainPeriod = ItemDto.TrainPeriod,
+                applicDeadLine = ItemDto.applicDeadLine,
+                TrainCost = ItemDto.TrainCost,
                 //CategoryID = ItemDto.CategoryID,
                 //Image = stream.ToArray()
             };
@@ -76,11 +79,16 @@ namespace Graduates_API.Controllers
         //    await ITEMDTO.Image.CopyToAsync(stream);
         //    Item.Image = stream.ToArray();
         //}
-        //Item.CompanyName = ItemDto.CompanyName,
-        //   Item.Description = ItemDto.Description,
-        //   Item.Location = ItemDto.Location,
-        //   Item.TrainCost = ItemDto.TrainCost,
-        //   Item.TrainPeriod = ItemDto.TrainPeriod,
+        //       Title = ItemDto.Title,
+        //        CompanyName = ItemDto.Description,
+        //        Description = ItemDto.CompanyName,
+        //        Location = ItemDto.Location,
+        //        skillRequired = ItemDto.skillRequired,
+        //        TrainPeriod = ItemDto.TrainPeriod,
+        //        applicDeadLine = ItemDto.applicDeadLine,
+        //        TrainCost = ItemDto.TrainCost,
+                //CategoryID = ItemDto.CategoryID,
+                //Image = stream.ToArray()
 
         //_UnityofWork.Save();
         //return Ok(Item);

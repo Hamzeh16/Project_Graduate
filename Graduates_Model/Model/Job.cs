@@ -8,6 +8,9 @@ namespace Graduates_Model.Model
         public int ID { get; set; }
 
         [StringLength(50)]
+        public string? Title { get; set; }
+
+        [StringLength(50)]
         public string? CompanyName { get; set; }
 
         [StringLength(500)]
@@ -16,9 +19,13 @@ namespace Graduates_Model.Model
         [StringLength(50)]
         public string? Location { get; set; }
 
+        [StringLength(50)]
+        public string? Email { get; set; }
+
         [StringLength(100)]
         public string? Qalification { get; set; }
 
         public DateTime? JobDeadLine { get; set; }
+
     }
 }
