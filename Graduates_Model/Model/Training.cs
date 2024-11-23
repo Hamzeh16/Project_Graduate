@@ -2,7 +2,7 @@
 
 namespace Graduates_Model.Model
 {
-    public class    Traning
+    public class Traning
     {
         [Key]
         public int ID { get; set; }
