@@ -26,6 +26,11 @@ namespace Graduates_Data.Data
         /// </summary>
         public DbSet<Job> Job { get; set; }
 
+        /// <summary>
+        /// Application Form Table
+        /// </summary>
+        public DbSet<ApplicationForm> ApplicationForms { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

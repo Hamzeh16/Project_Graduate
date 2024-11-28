@@ -1,4 +1,4 @@
-using Graduates_Data.Data;
+﻿using Graduates_Data.Data;
 using Graduates_Model.Model;
 using Graduates_Service.Services.Repositry;
 using Graduates_Service.Services.Repositry.IRepositry;
@@ -59,6 +59,18 @@ builder.Services.AddScoped<IUnityofWork, UnityofWork>();
 
 
 builder.Services.AddControllers();
+
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", builder =>
+    {
+        builder.WithOrigins("http://localhost:5173") // استبدل بعنوان الـ Frontend
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 // Add Swagger and configure security definitions
@@ -104,10 +116,17 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+    });
 }
 
 app.UseRouting();//*
+
+// Use CORS policy
+
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 

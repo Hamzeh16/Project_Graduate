@@ -1,26 +1,25 @@
-﻿using Graduates_Utility;
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Graduates_Service.Services.Dto
 {
     // For Register
     public class ApplicantDto
     {
-        public string? ApplicantName { get; set; }
-        public int? ApplicantIDNumber { get; set; }
-        public string? ApplicantPhoneNumber { get; set; }
-        public string? ApplicantEmail { get; set; }
-        public string? ApplicantPassword { get; set; }
-        public string? ApplicantType { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? Role { get; set; }
+        public string? Name { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+        public string? Password { get; set; }
+        public string? CompanyId { get; set; } // For file uploads    }
     }
+
     // For Login
     public class ApplicantLogin
     {
-        [Required]
-        public string? ApplicantUserName { get; set; }
+        public string? email { get; set; }
 
-        [Required]
-        public string? ApplicantPassword { get; set; }
+        public string? password { get; set; }
     }
 }

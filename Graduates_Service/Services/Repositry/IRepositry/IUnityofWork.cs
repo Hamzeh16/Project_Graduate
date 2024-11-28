@@ -7,6 +7,8 @@
         public ITraningRepositry TrainingRepositry { get; set; }
         public IJob JobRepositry { get; set; }
 
+        public IApplicationForm AppFormRepositry { get; set; }
+
         #endregion
 
         /// <summary>

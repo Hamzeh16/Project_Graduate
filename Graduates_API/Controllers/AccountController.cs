@@ -1,4 +1,5 @@
-﻿using Graduates_Model.Model;
+﻿using Graduates_Data.Data;
+using Graduates_Model.Model;
 using Graduates_Service.Services.Dto;
 using Graduates_Service.Services.Repositry.IRepositry;
 using Microsoft.AspNetCore.Identity;
@@ -18,25 +19,27 @@ namespace TestRestApi.Controllers
     {
         public AccountController(UserManager<ApplicantUser> userManager,
             IUnityofWork UnityofWork, IEmailService emailService,
-            RoleManager<IdentityRole> roleManager, IConfiguration config)
+            RoleManager<IdentityRole> roleManager, IConfiguration config,AppDbContext db)
         {
             _userManager = userManager;
             _emailService = emailService;
             _UnityofWork = UnityofWork;
             _roleManager = roleManager;
             _config = config;
+            _db = db;
         }
         private readonly UserManager<ApplicantUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
         private readonly IUnityofWork _UnityofWork;
         private readonly IConfiguration _config;
+        private readonly AppDbContext _db;
 
-        [HttpPost("Register")]
-        public async Task<IActionResult> RegisterNewUser([FromBody] ApplicantDto registerUser, string role)
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterNewUser([FromBody] ApplicantDto registerUser)
         {
             // Check For Email Is Not Empty
-            if (string.IsNullOrEmpty(registerUser.ApplicantEmail))
+            if (string.IsNullOrEmpty(registerUser.Email))
             {
                 throw new ArgumentException("Email address cannot be null or empty.");
             }
@@ -44,7 +47,7 @@ namespace TestRestApi.Controllers
             if (ModelState.IsValid)
             {
                 // Check User is Exist
-                var UserExist = _userManager.FindByEmailAsync(registerUser.ApplicantEmail).Result;
+                var UserExist = _userManager.FindByEmailAsync(registerUser.Email).Result;
                 if (UserExist != null)
                 {
                     return StatusCode(StatusCodes.Status403Forbidden,
@@ -54,19 +57,26 @@ namespace TestRestApi.Controllers
                 // Add User in database
                 ApplicantUser appUser = new()
                 {
-                    UserName = registerUser.ApplicantName,
-                    Email = registerUser.ApplicantEmail,
-                    PhoneNumber = registerUser.ApplicantPhoneNumber,
-                    STUDENTID = registerUser.ApplicantIDNumber,
-                    APPLICANTTYPE = registerUser.ApplicantType,
-                    IMAGEURL = registerUser.ImageUrl
+                    UserName = registerUser.Name,
+                    Email = registerUser.Email,
+                    PhoneNumber = registerUser.Phone,
+                    //STUDENTID = registerUser.id,
+                    APPLICANTTYPE = registerUser.Role,
+                    REQUIST = true,
+                    IMAGEURL = registerUser.CompanyId
                 };
+
+                // Check If Company
+                if (appUser.APPLICANTTYPE == "Company")
+                {
+                    appUser.REQUIST = false;
+                }
 
                 IdentityResult Result = new IdentityResult();
 
-                if (IsStrongPasswords(registerUser.ApplicantPassword))
+                if (IsStrongPasswords(registerUser.Password))
                 {
-                    Result = await _userManager.CreateAsync(appUser, registerUser.ApplicantPassword);
+                    Result = await _userManager.CreateAsync(appUser, registerUser.Password);
                 }
                 else
                 {
@@ -75,20 +85,20 @@ namespace TestRestApi.Controllers
                 }
 
                 // Assigen a Role
-                if (await _roleManager.RoleExistsAsync(role))
+                if (await _roleManager.RoleExistsAsync(appUser.APPLICANTTYPE))
                 {
                     if (!Result.Succeeded)
                     {
                         return StatusCode(StatusCodes.Status500InternalServerError,
                                      new Respone() { Status = "Erorr", Message = "User Faild To Created!" });
                     }
-                    
+
                     // Assigen a Role
-                    await _userManager.AddToRoleAsync(appUser, role);
-                    
+                    await _userManager.AddToRoleAsync(appUser, appUser.APPLICANTTYPE);
+
                     // Add Token To Verifiy Email
                     var token = _userManager.GenerateEmailConfirmationTokenAsync(appUser);
-                    
+
                     // Generate confirmation link
                     var ConfirmLinks = Url.Action("ConfirmEmail", "Authentication", new { token, email = appUser.Email }, Request.Scheme);
                     var ConfirmLink = $"{Request.Scheme}://{Request.Host}/api/Account/ConfirmEmail?token={Uri.EscapeDataString(await token)}&email={Uri.EscapeDataString(appUser.Email)}";
@@ -108,34 +118,38 @@ namespace TestRestApi.Controllers
             return BadRequest();
         }
 
-        [HttpPost("Login")]
-        public async Task<IActionResult> LoginUser(ApplicantLogin loginUser)
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody] ApplicantLogin loginUser)
         {
+            ApplicantUser? user = await _userManager.FindByEmailAsync(loginUser.email);
 
-            ApplicantUser? user = await _userManager.FindByNameAsync(loginUser.ApplicantUserName);
-
-            if (user != null && await _userManager.CheckPasswordAsync(user, loginUser.ApplicantPassword))
+            if (user?.REQUIST == true)
             {
-                var authClaim = new List<Claim>
+                if (user != null && await _userManager.CheckPasswordAsync(user, loginUser.password))
+                {
+                    var authClaim = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name,user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
-                var userRole = await _userManager.GetRolesAsync(user);
-                foreach(var role in userRole)
-                {
-                    authClaim.Add(new Claim(ClaimTypes.Role, role));
+                    var userRole = await _userManager.GetRolesAsync(user);
+                    foreach (var role in userRole)
+                    {
+                        authClaim.Add(new Claim(ClaimTypes.Role, role));
+                    }
+
+                    var JwtToken = GetToken(authClaim);
+
+                    return Ok(new
+                    {
+                        token = new JwtSecurityTokenHandler().WriteToken(JwtToken),
+                        expiration = JwtToken.ValidTo
+                    });
                 }
-                
-                var JwtToken = GetToken(authClaim);
+                return StatusCode(StatusCodes.Status403Forbidden,
+                       new Respone() { Status = "Erorr", Message = "Company Is Checked!" });
 
-                return Ok(new
-                {
-                    token = new JwtSecurityTokenHandler().WriteToken(JwtToken),
-                    expiration = JwtToken.ValidTo
-                });
             }
-
             return Unauthorized();
         }
 
@@ -147,18 +161,48 @@ namespace TestRestApi.Controllers
                 issuer: _config["JWT:ValidIssuer"],
                 audience: _config["JWT:ValidAudience"],
                 expires: DateTime.Now.AddHours(1),
-                claims:authClaim,
+                claims: authClaim,
                 signingCredentials: new SigningCredentials(authSignKey, SecurityAlgorithms.HmacSha256));
 
             return token;
         }
 
+        // Approve a post request
+        [HttpPost]
+        public IActionResult PendingPostRequests(ApplicantUser applicantUser, string action, string? ID)
+        {
+            if (ID == null)
+            {
+                return NotFound();
+            }
+            applicantUser = _UnityofWork.ApplicantRepositry.Get(c => c.Id == ID);
+            if (applicantUser != null)
+            {
+                if (action == "approve")
+                {
+                    // Handle approve logic
+                    applicantUser.REQUIST = true;
+                }
+                else if (action == "reject")
+                {
+                    // Handle reject logic
+                    applicantUser.REQUIST = false;
+                }
+                _UnityofWork.ApplicantRepositry.Update(applicantUser);
+                _UnityofWork.Save();
+
+                // Sent Approved Email *******
+                SentEmail(applicantUser.Email);
+            }
+            return RedirectToAction("PendingPostRequests");
+        }
+
         [HttpGet("SentEmail")]
-        public IActionResult TestEmail()
+        public IActionResult SentEmail(string email)
         {
             var message =
                 new Messsage(new string[]
-                { "haaalaaaal@gmail.com" }, "Test", "<h1>Account is Created!</h1>");
+                { email }, "Confirm", "Account is Approved!");
 
             _emailService.SendEmail(message);
 

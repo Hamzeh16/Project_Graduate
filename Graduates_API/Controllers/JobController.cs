@@ -1,11 +1,13 @@
 ﻿using Graduates_Model.Model;
 using Graduates_Service.Services.Repositry.IRepositry;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Graduates_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Company")]
     public class JobController : Controller
     {
         public JobController(IUnityofWork UnityofWork)
