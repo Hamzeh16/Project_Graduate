@@ -5,24 +5,23 @@ namespace Graduates_Service.Services.Dto
     public class TraningDto
     {
 
-        public string? Title { get; set; }
+        public string? title { get; set; }
 
-        public string? CompanyName { get; set; }
+        public string? companyName { get; set; }
 
-        public string? Description { get; set; }
+        public string? description { get; set; }
 
-        public string? Location { get; set; }
+        public string? location { get; set; }
 
-        public string? skillRequired { get; set; }
+        public string? internshipType { get; set; }
 
-        public string? TrainPeriod { get; set; }
+        public string? duration { get; set; }
 
-        public DateTime? applicDeadLine { get; set; }
+        public string[]? responsibilities { get; set; }
 
-        [Range(0, float.MaxValue)]
-        public float TrainCost { get; set; }
+        public string[]? qualifications { get; set; }
 
-        public string? Email { get; set; }
+        public DateTime? applicationDeadline { get; set; }
 
     }
 }

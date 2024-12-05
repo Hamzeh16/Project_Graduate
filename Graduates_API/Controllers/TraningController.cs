@@ -1,4 +1,5 @@
 ﻿using Graduates_Model.Model;
+using Graduates_Service.Services.Dto;
 using Graduates_Service.Services.Repositry.IRepositry;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,20 +34,21 @@ namespace Graduates_API.Controllers
         /// <param name="ItemDto"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> AddItems([FromForm] Traning ItemDto)
+        public async Task<IActionResult> AddItems([FromForm] TraningDto ItemDto)
         {
             //using var stream = new MemoryStream();
             //await ItemDto.Image.CopyToAsync(stream);
             var item = new Traning
             {
-                Title = ItemDto.Title,
-                CompanyName = ItemDto.Description,
-                Description = ItemDto.CompanyName,
-                Location = ItemDto.Location,
-                skillRequired = ItemDto.skillRequired,
-                TrainPeriod = ItemDto.TrainPeriod,
-                applicDeadLine = ItemDto.applicDeadLine,
-                TrainCost = ItemDto.TrainCost,
+                Title = ItemDto.title,
+                CompanyName = ItemDto.companyName,
+                Description = ItemDto.description,
+                Location = ItemDto.location,
+                internshipType = ItemDto.internshipType,
+                duration = ItemDto.duration,
+                applicationDeadline = ItemDto.applicationDeadline,
+                Responsibilities = ItemDto.responsibilities,
+                qualifications = ItemDto.qualifications,
                 //CategoryID = ItemDto.CategoryID,
                 //Image = stream.ToArray()
             };
@@ -62,7 +64,7 @@ namespace Graduates_API.Controllers
         /// < param name="ITEMDTO"></param>
         /// <returns></returns>
         [HttpPut("Update")]
-        public async Task<IActionResult> UpdateItems(int ID, [FromForm] Traning TRAINDTO)
+        public async Task<IActionResult> UpdateItems(int ID, [FromForm] TraningDto TRAINDTO)
         {
             Traning? traning = _UnityofWork.TrainingRepositry.Get(c => c.ID == ID);
             if (traning == null)
@@ -70,16 +72,15 @@ namespace Graduates_API.Controllers
                 return NotFound($"Item id {ID} Not Exist");
             }
 
-            traning.Title = TRAINDTO.Title;
-            traning.CompanyName = TRAINDTO.Description;
-            traning.Description = TRAINDTO.CompanyName;
-            traning.Location = TRAINDTO.Location;
-            traning.skillRequired = TRAINDTO.skillRequired;
-            traning.applicDeadLine = TRAINDTO.applicDeadLine;
-            traning.TrainPeriod = TRAINDTO.TrainPeriod;
-            traning.TrainCost = TRAINDTO.TrainCost;
-            traning.EmailTraining = TRAINDTO.EmailTraining;
-
+            traning.Title = TRAINDTO.title;
+            traning.CompanyName = TRAINDTO.companyName;
+            traning.Description = TRAINDTO.description;
+            traning.Location = TRAINDTO.location;
+            traning.internshipType = TRAINDTO.internshipType;
+            traning.applicationDeadline = TRAINDTO.applicationDeadline;
+            traning.duration = TRAINDTO.duration;
+            traning.Responsibilities = TRAINDTO.responsibilities;
+            traning.qualifications = TRAINDTO.qualifications;
             _UnityofWork.Save();
             return Ok(traning);
         }

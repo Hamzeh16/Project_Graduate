@@ -1,4 +1,5 @@
 ﻿using Graduates_Model.Model;
+using Graduates_Service.Services.Dto;
 using Graduates_Service.Services.Repositry.IRepositry;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,19 +35,21 @@ namespace Graduates_API.Controllers
         /// <param name="ItemDto"></param>
         /// <returns></returns>
         [HttpPost("Add")]
-        public async Task<IActionResult> AddItems([FromForm] Job ItemDto)
+        public async Task<IActionResult> AddItems([FromForm] JobDto ItemDto)
         {
             //using var stream = new MemoryStream();
             //await ItemDto.Image.CopyToAsync(stream);
             var item = new Job
             {
-                Title = ItemDto.Title,
-                CompanyName = ItemDto.Description,
+                Title = ItemDto.title,
+                CompanyName = ItemDto.description,
                 Description = ItemDto.CompanyName,
-                Location = ItemDto.Location,
-                EmailJob = ItemDto.EmailJob,
-                Qalification = ItemDto.Qalification,
-                JobDeadLine = DateTime.Now
+                Location = ItemDto.location ,
+                EmailJob = ItemDto.email,
+                qualifications = ItemDto.qualifications,
+                ApplicationDeadLine = ItemDto.applicationDeadLine,
+                Responsibilities= ItemDto.responsibilities,
+                JobType= ItemDto.jobType,
                 //CategoryID = ItemDto.CategoryID,
                 //Image = stream.ToArray()
             };
@@ -62,7 +65,7 @@ namespace Graduates_API.Controllers
         /// < param name="ITEMDTO"></param>
         /// <returns></returns>
         [HttpPut("Update")]
-        public async Task<IActionResult> UpdateItems(int ID, [FromForm] Job ITEMDTO)
+        public async Task<IActionResult> UpdateItems(int ID, [FromForm] JobDto ITEMDTO)
         {
             Job? job = _UnityofWork.JobRepositry.Get(c => c.ID == ID);
             if (job == null)
@@ -70,13 +73,13 @@ namespace Graduates_API.Controllers
                 return NotFound($"Item id {ID} Not Exist");
             }
 
-            job.Title = ITEMDTO.Title;
-            job.CompanyName = ITEMDTO.Description;
+            job.Title = ITEMDTO.title;
+            job.CompanyName = ITEMDTO.description;
             job.Description = ITEMDTO.CompanyName;
-            job.Location = ITEMDTO.Location;
-            job.EmailJob = ITEMDTO.EmailJob;
-            job.Qalification = ITEMDTO.Qalification;
-            job.JobDeadLine = ITEMDTO.JobDeadLine;
+            job.Location = ITEMDTO.location;
+            job.EmailJob = ITEMDTO.email;
+            job.qualifications = ITEMDTO.qualifications;
+            job.ApplicationDeadLine = ITEMDTO.applicationDeadLine;
 
             _UnityofWork.Save();
             return Ok(job);

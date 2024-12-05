@@ -22,10 +22,17 @@ namespace Graduates_Model.Model
         [StringLength(50)]
         public string? EmailJob { get; set; }
 
-        [StringLength(100)]
-        public string? Qalification { get; set; }
+        [StringLength(50)]
+        public string? JobType { get; set; }
 
-        public DateTime? JobDeadLine { get; set; }
+        [StringLength(100)]
+        public string[]? Responsibilities { get; set; }
+
+
+        [StringLength(100)]
+        public string[]? qualifications { get; set; }
+
+        public DateTime? ApplicationDeadLine { get; set; }
 
     }
 }

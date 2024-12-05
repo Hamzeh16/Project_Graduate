@@ -19,19 +19,23 @@ namespace Graduates_Model.Model
         [StringLength(50)]
         public string? Location { get; set; }
 
+
+        [StringLength(50)]
+        public string? internshipType { get; set; }
+
+        [StringLength(50)]
+        public string? duration { get; set; }
+
+
         [StringLength(100)]
-        public string? skillRequired { get; set; }
+        public string[]? Responsibilities { get; set; }
 
 
-        [StringLength(50)]
-        public string? TrainPeriod { get; set; }
+        [StringLength(100)]
+        public string[]? qualifications { get; set; }
 
-        public DateTime? applicDeadLine { get; set; }
+        public DateTime? applicationDeadline { get; set; }
 
-        [Range(0, float.MaxValue)]
-        public float TrainCost { get; set; }
-
-        [StringLength(50)]
-        public string? EmailTraining { get; set; }
+     
     }
 }
