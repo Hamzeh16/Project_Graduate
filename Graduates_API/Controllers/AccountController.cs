@@ -36,7 +36,7 @@ namespace TestRestApi.Controllers
         private readonly AppDbContext _db;
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterNewUser([FromBody] ApplicantDto registerUser)
+        public async Task<IActionResult> RegisterNewUser([FromForm] ApplicantDto registerUser)
         {
             // Check For Email Is Not Empty
             if (string.IsNullOrEmpty(registerUser.Email))
@@ -54,6 +54,23 @@ namespace TestRestApi.Controllers
                                       new Respone() { Status = "Erorr", Message = "User already exists!" });
                 }
 
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+
+                // التأكد من أن المجلد موجود
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                // تحديد المسار الذي سيتم تخزين السيرة الذاتية فيه
+                var filePath = Path.Combine(uploadsFolder, registerUser.CompanyId.FileName);
+
+                // تخزين الملف في المجلد
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await registerUser.CompanyId.CopyToAsync(stream);  // نسخ محتويات الملف إلى المجلد
+                }
+
                 // Add User in database
                 ApplicantUser appUser = new()
                 {
@@ -63,7 +80,7 @@ namespace TestRestApi.Controllers
                     //STUDENTID = registerUser.id,
                     APPLICANTTYPE = registerUser.Role,
                     REQUIST = true,
-                    IMAGEURL = registerUser.CompanyId
+                    IMAGEURL = filePath
                 };
 
                 // Check If Company
@@ -168,7 +185,7 @@ namespace TestRestApi.Controllers
         }
 
         // Approve a post request
-        [HttpPost]
+        [HttpPatch("PendingPostRequests")]
         public IActionResult PendingPostRequests(ApplicantUser applicantUser, string action, string? ID)
         {
             if (ID == null)

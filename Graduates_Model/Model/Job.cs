@@ -34,5 +34,15 @@ namespace Graduates_Model.Model
 
         public DateTime? ApplicationDeadLine { get; set; }
 
+        [StringLength(50)]
+        public string? internshipType { get; set; }
+
+        [StringLength(50)]
+        public string? duration { get; set; }
+
+        public string? formType { get; set; }
+
+        public string? status { get; set; }
+
     }
 }

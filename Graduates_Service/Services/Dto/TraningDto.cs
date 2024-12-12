@@ -4,7 +4,6 @@ namespace Graduates_Service.Services.Dto
 {
     public class TraningDto
     {
-
         public string? title { get; set; }
 
         public string? companyName { get; set; }
@@ -23,5 +22,8 @@ namespace Graduates_Service.Services.Dto
 
         public DateTime? applicationDeadline { get; set; }
 
+        public string? formType { get; set; }
+
+        public string? status { get; set; }
     }
 }

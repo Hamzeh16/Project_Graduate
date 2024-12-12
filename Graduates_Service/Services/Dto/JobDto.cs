@@ -6,7 +6,7 @@ namespace Graduates_Service.Services.Dto
     {
         public string? title { get; set; }
 
-        public string? CompanyName { get; set; }
+        public string? companyName { get; set; }
 
         public string? description { get; set; }
 
@@ -20,5 +20,14 @@ namespace Graduates_Service.Services.Dto
         public string[]? qualifications { get; set; }
 
         public DateTime? applicationDeadLine { get; set; }
+
+        public string? internshipType { get; set; }
+
+        public string? duration { get; set; }
+
+        public string? formType { get; set; }
+
+        public string? status { get; set; }
+
     }
 }

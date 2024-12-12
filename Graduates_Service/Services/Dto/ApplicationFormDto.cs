@@ -1,15 +1,17 @@
-﻿namespace Graduates_Service.Services.Dto
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Graduates_Service.Services.Dto
 {
     public class ApplicationFormDto
     {
-        public string? YourName { get; set; }
+        public string? name { get; set; }
 
-        public string? YourEmail { get; set; }
+        public string? email { get; set; }
 
-        public string? PhoneNumber { get; set; }
+        public string? phone { get; set; }
 
-        public string? Address { get; set; }
+        public string? address { get; set; }
 
-        public string? ImageUrl { get; set; }
+        public IFormFile? resume { get; set; }
     }
 }

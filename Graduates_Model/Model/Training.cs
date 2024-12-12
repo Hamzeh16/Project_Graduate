@@ -36,6 +36,9 @@ namespace Graduates_Model.Model
 
         public DateTime? applicationDeadline { get; set; }
 
-     
+        public string? formType { get; set; }
+
+        public string? status { get; set; }
+
     }
 }

@@ -8,7 +8,7 @@ namespace Graduates_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class AppFormController : Controller
     {
         public AppFormController(IUnityofWork UnityofWork)
@@ -29,25 +29,57 @@ namespace Graduates_API.Controllers
             return Ok(objList);
         }
 
-        /// <summary>
-        /// Save Data 
-        /// </summary>
-        /// <param name="ItemDto"></param>
-        /// <returns></returns>
         [HttpPost("Add")]
         public async Task<IActionResult> AddItems([FromForm] ApplicationFormDto appFormDto)
         {
-            var item = new ApplicationForm
+            try
             {
-                YourName = appFormDto.YourName,
-                YourEmail = appFormDto.YourEmail,
-                PhoneNumber = appFormDto.PhoneNumber,
-                Address = appFormDto.Address,
-                ImageUrl = appFormDto.ImageUrl,
-            };
-            _UnityofWork.AppFormRepositry.Add(item);
-            _UnityofWork.Save();
-            return Ok(item);
+                // التحقق من أن الملف تم استلامه
+                if (appFormDto.resume == null || appFormDto.resume.Length == 0)
+                {
+                    return BadRequest("No file uploaded.");
+                }
+
+                // تحديد المجلد الذي سيتم تخزين الملفات فيه
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+
+                // التأكد من أن المجلد موجود
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                // تحديد المسار الذي سيتم تخزين السيرة الذاتية فيه
+                var filePath = Path.Combine(uploadsFolder, appFormDto.resume.FileName);
+
+                // تخزين الملف في المجلد
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await appFormDto.resume.CopyToAsync(stream);  // نسخ محتويات الملف إلى المجلد
+                }
+
+                // إنشاء الكائن الذي سيتم تخزينه في قاعدة البيانات
+                var item = new ApplicationForm
+                {
+                    YourName = appFormDto.name,
+                    YourEmail = appFormDto.email,
+                    PhoneNumber = appFormDto.phone,
+                    Address = appFormDto.address,
+                    ImageUrl = filePath,  // تخزين المسار الفعلي للسيرة الذاتية
+                };
+
+                // إضافة السجل إلى قاعدة البيانات
+                _UnityofWork.AppFormRepositry.Add(item);
+                 _UnityofWork.Save();
+
+                return Ok(new { message = "Application submitted successfully", item });
+            }
+            catch (Exception ex)
+            {
+                // تسجيل الخطأ في السجلات
+                //_logger.LogError($"An error occurred: {ex.Message}");
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
         }
 
         /// <summary>
@@ -65,11 +97,11 @@ namespace Graduates_API.Controllers
                 return NotFound($"Item id {ID} Not Exist");
             }
 
-            appform.YourName = appFormDto.YourName;
-            appform.YourEmail = appFormDto.YourEmail;
-            appform.PhoneNumber = appFormDto.PhoneNumber;
-            appform.Address = appFormDto.Address;
-            appform.ImageUrl = appFormDto.ImageUrl;
+            appform.YourName = appFormDto.name;
+            appform.YourEmail = appFormDto.email;
+            appform.PhoneNumber = appFormDto.phone;
+            appform.Address = appFormDto.address;
+            //appform.ImageUrl = appFormDto.resume;
 
             _UnityofWork.Save();
             return Ok(appform);

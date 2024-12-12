@@ -12,7 +12,7 @@ namespace Graduates_Service.Services.Dto
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string? Password { get; set; }
-        public string? CompanyId { get; set; } // For file uploads    }
+        public IFormFile? CompanyId { get; set; } // For file uploads    }
     }
 
     // For Login

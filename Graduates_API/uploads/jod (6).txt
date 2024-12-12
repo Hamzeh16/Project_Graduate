@@ -1,0 +1,45 @@
+/// <summary>
+/// Save Data
+/// </summary>
+/// <param name="appFormDto"></param>
+/// <param name="resume"></param>
+/// <returns></returns>
+[HttpPost("Add")]
+public async Task<IActionResult> AddItems([FromForm] ApplicationFormDto appFormDto, IFormFile resume)
+{
+    // تحديد المجلد الذي سيتم تخزين الملفات فيه
+    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+
+    // التأكد من أن المجلد موجود
+    if (!Directory.Exists(uploadsFolder))
+    {
+        Directory.CreateDirectory(uploadsFolder);
+    }
+
+    // تحديد المسار الذي سيتم تخزين السيرة الذاتية فيه
+    var filePath = Path.Combine(uploadsFolder, resume.FileName);
+
+    // تخزين الملف
+    using (var stream = new FileStream(filePath, FileMode.Create))
+    {
+        await resume.CopyToAsync(stream);
+    }
+
+    // إنشاء الكائن الذي سيتم تخزينه في قاعدة البيانات
+    var item = new ApplicationForm
+    {
+        YourName = appFormDto.Name,      // التأكد من استخدام الحقول بشكل صحيح في DTO
+        YourEmail = appFormDto.Email,
+        PhoneNumber = appFormDto.Phone,
+        Address = appFormDto.Address,
+        // حفظ مسار السيرة الذاتية في الحقل المناسب (يمكنك استخدام ResumePath أو أي اسم آخر)
+        ResumePath = filePath,    // تخزين المسار الفعلي للملف
+    };
+
+    // إضافة السجل إلى قاعدة البيانات
+    _UnityofWork.AppFormRepositry.Add(item);
+    await _UnityofWork.Save(); // تأكد من استخدام await إذا كنت تستخدم قاعدة بيانات غير متزامنة (async)
+
+    // إرجاع النتيجة
+    return Ok(new { message = "Application submitted successfully", item });
+}

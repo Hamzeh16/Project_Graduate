@@ -8,7 +8,7 @@ namespace Graduates_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Company")]
+    //[Authorize(Roles = "Company")]
     public class TraningController : Controller
     {
         public TraningController(IUnityofWork UnityofWork)
@@ -29,15 +29,24 @@ namespace Graduates_API.Controllers
         }
 
         /// <summary>
+        /// Get By ID
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetByID")]
+        public IActionResult GetTrainPosts(int ID)
+        {
+            Traning objJobList = _UnityofWork.TrainingRepositry.Get(c => c.ID == ID);
+            return Ok(objJobList);
+        }
+
+        /// <summary>
         /// Save Data 
         /// </summary>
         /// <param name="ItemDto"></param>
         /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> AddItems([FromForm] TraningDto ItemDto)
+        [HttpPost("Add")]
+        public async Task<IActionResult> AddItems([FromBody] TraningDto ItemDto)
         {
-            //using var stream = new MemoryStream();
-            //await ItemDto.Image.CopyToAsync(stream);
             var item = new Traning
             {
                 Title = ItemDto.title,
@@ -49,8 +58,8 @@ namespace Graduates_API.Controllers
                 applicationDeadline = ItemDto.applicationDeadline,
                 Responsibilities = ItemDto.responsibilities,
                 qualifications = ItemDto.qualifications,
-                //CategoryID = ItemDto.CategoryID,
-                //Image = stream.ToArray()
+                formType = ItemDto.formType,
+                status = "Pending"
             };
             _UnityofWork.TrainingRepositry.Add(item);
             _UnityofWork.Save();
@@ -61,7 +70,7 @@ namespace Graduates_API.Controllers
         /// Update Data
         /// </summary>
         /// <param name = "ID" ></ param >
-        /// < param name="ITEMDTO"></param>
+        /// < param name="TRAINDTO"></param>
         /// <returns></returns>
         [HttpPut("Update")]
         public async Task<IActionResult> UpdateItems(int ID, [FromForm] TraningDto TRAINDTO)

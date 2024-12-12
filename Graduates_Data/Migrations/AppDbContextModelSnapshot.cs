@@ -22,6 +22,34 @@ namespace Graduates_Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Graduates_Model.Model.ApplicationForm", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("YourEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("YourName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ApplicationForms");
+                });
+
             modelBuilder.Entity("Graduates_Model.Model.Job", b =>
                 {
                     b.Property<int>("ID")
@@ -29,6 +57,9 @@ namespace Graduates_Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime?>("ApplicationDeadLine")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CompanyName")
                         .HasMaxLength(50)
@@ -42,20 +73,39 @@ namespace Graduates_Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime?>("JobDeadLine")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("JobType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Location")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Qalification")
+                    b.Property<string>("Responsibilities")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("duration")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("formType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("internshipType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("qualifications")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -78,31 +128,38 @@ namespace Graduates_Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("EmailTraining")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("Location")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Responsibilities")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Title")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<float>("TrainCost")
-                        .HasColumnType("real");
+                    b.Property<DateTime?>("applicationDeadline")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("TrainPeriod")
+                    b.Property<string>("duration")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime?>("applicDeadLine")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("formType")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("skillRequired")
+                    b.Property<string>("internshipType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("qualifications")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
