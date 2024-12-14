@@ -8,7 +8,7 @@ namespace Graduates_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AppFormController : Controller
     {
         public AppFormController(IUnityofWork UnityofWork)

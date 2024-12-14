@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Graduates_Service.Services.Dto
 {
@@ -28,6 +29,11 @@ namespace Graduates_Service.Services.Dto
         public string? formType { get; set; }
 
         public string? status { get; set; }
+
+        [NotMapped]
+        public string? crFile { get; set; }
+        [NotMapped]
+        public string? companyEmail { get; set; }
 
     }
 }

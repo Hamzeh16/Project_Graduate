@@ -86,7 +86,7 @@ namespace TestRestApi.Controllers
                 // Check If Company
                 if (appUser.APPLICANTTYPE == "Company")
                 {
-                    appUser.REQUIST = false;
+                    appUser.REQUIST = null;
                 }
 
                 IdentityResult Result = new IdentityResult();
@@ -140,7 +140,7 @@ namespace TestRestApi.Controllers
         {
             ApplicantUser? user = await _userManager.FindByEmailAsync(loginUser.email);
 
-            if (user?.REQUIST == true)
+            if (user?.REQUIST == true || user?.REQUIST == null)
             {
                 if (user != null && await _userManager.CheckPasswordAsync(user, loginUser.password))
                 {

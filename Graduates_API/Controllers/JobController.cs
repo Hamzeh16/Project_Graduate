@@ -2,14 +2,13 @@
 using Graduates_Service.Services.Dto;
 using Graduates_Service.Services.Repositry.IRepositry;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Graduates_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Company")]
+    [Authorize(Roles = "Company")]
     public class JobController : Controller
     {
         public JobController(IUnityofWork UnityofWork)
@@ -22,6 +21,7 @@ namespace Graduates_API.Controllers
         /// Get All Data
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public IActionResult GetJobPosts()
         {
@@ -62,6 +62,7 @@ namespace Graduates_API.Controllers
         /// Get By ID
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("GetByID")]
         public IActionResult GetJobPosts(int ID)
         {
