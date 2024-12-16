@@ -23,7 +23,7 @@ namespace Graduates_Service.Services.Repositry
         private MimeMessage CreateEmailMessage(Messsage message)
         {
             var EmailMessage = new MimeMessage();
-            EmailMessage.From.Add(new MailboxAddress("email",_emailConfigration.From));
+            EmailMessage.From.Add(new MailboxAddress("Careeer Path Hub", _emailConfigration.From));
             EmailMessage.To.AddRange(message.To);
             EmailMessage.Subject = message.Subject;
             EmailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };

@@ -19,7 +19,7 @@ namespace TestRestApi.Controllers
     {
         public AccountController(UserManager<ApplicantUser> userManager,
             IUnityofWork UnityofWork, IEmailService emailService,
-            RoleManager<IdentityRole> roleManager, IConfiguration config,AppDbContext db)
+            RoleManager<IdentityRole> roleManager, IConfiguration config, AppDbContext db)
         {
             _userManager = userManager;
             _emailService = emailService;
@@ -135,53 +135,105 @@ namespace TestRestApi.Controllers
             return BadRequest();
         }
 
+        //[HttpPost("login")]
+        //public async Task<IActionResult> LoginUser([FromBody] ApplicantLogin loginUser)
+        //{
+        //    ApplicantUser? user = await _userManager.FindByEmailAsync(loginUser.email);
+
+        //    if (user?.REQUIST == true || user?.REQUIST == null)
+        //    {
+        //        if (user != null && await _userManager.CheckPasswordAsync(user, loginUser.password))
+        //        {
+        //            var authClaim = new List<Claim>
+        //        {
+        //            new Claim(ClaimTypes.Name,user.UserName),
+        //            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        //        };
+        //            var userRole = await _userManager.GetRolesAsync(user);
+        //            foreach (var role in userRole)
+        //            {
+        //                authClaim.Add(new Claim(ClaimTypes.Role, role));
+        //            }
+
+        //            var JwtToken = GetToken(authClaim);
+
+        //            return Ok(new
+        //            {
+        //                token = new JwtSecurityTokenHandler().WriteToken(JwtToken),
+        //                expiration = JwtToken.ValidTo
+        //            });
+        //        }
+        //        return StatusCode(StatusCodes.Status403Forbidden,
+        //               new Respone() { Status = "Erorr", Message = "Company Is Checked!" });
+
+        //    }
+        //    return Unauthorized();
+        //}
+
+        //private JwtSecurityToken GetToken(List<Claim> authClaim)
+        //{
+        //    var authSignKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"]));
+
+        //    var token = new JwtSecurityToken(
+        //        issuer: _config["JWT:ValidIssuer"],
+        //        audience: _config["JWT:ValidAudience"],
+        //        expires: DateTime.Now.AddHours(1),
+        //        claims: authClaim,
+        //        signingCredentials: new SigningCredentials(authSignKey, SecurityAlgorithms.HmacSha256));
+
+        //    return token;
+        //}
+
+
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] ApplicantLogin loginUser)
         {
-            ApplicantUser? user = await _userManager.FindByEmailAsync(loginUser.email);
+            var user = await _userManager.FindByEmailAsync(loginUser.email);
 
-            if (user?.REQUIST == true || user?.REQUIST == null)
+            if (user == null || !(await _userManager.CheckPasswordAsync(user, loginUser.password)))
             {
-                if (user != null && await _userManager.CheckPasswordAsync(user, loginUser.password))
+                return Unauthorized(new { Status = "Error", Message = "Invalid email or password" });
+            }
+
+            if (user.REQUIST == false || user.REQUIST == null)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    new { Status = "Error", Message = "Account is pending approval or not active" });
+            }
+
+            var authClaim = new List<Claim>
                 {
-                    var authClaim = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name,user.UserName),
+                    new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
-                    var userRole = await _userManager.GetRolesAsync(user);
-                    foreach (var role in userRole)
-                    {
-                        authClaim.Add(new Claim(ClaimTypes.Role, role));
-                    }
 
-                    var JwtToken = GetToken(authClaim);
-
-                    return Ok(new
-                    {
-                        token = new JwtSecurityTokenHandler().WriteToken(JwtToken),
-                        expiration = JwtToken.ValidTo
-                    });
-                }
-                return StatusCode(StatusCodes.Status403Forbidden,
-                       new Respone() { Status = "Erorr", Message = "Company Is Checked!" });
-
+            var userRole = await _userManager.GetRolesAsync(user);
+            foreach (var role in userRole)
+            {
+                authClaim.Add(new Claim(ClaimTypes.Role, role));
             }
-            return Unauthorized();
+
+            var JwtToken = GetToken(authClaim);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(JwtToken),
+                expiration = JwtToken.ValidTo,
+                role = userRole.FirstOrDefault() // إضافة الدور إلى الاستجابة
+            });
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaim)
         {
             var authSignKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"]));
 
-            var token = new JwtSecurityToken(
+            return new JwtSecurityToken(
                 issuer: _config["JWT:ValidIssuer"],
                 audience: _config["JWT:ValidAudience"],
                 expires: DateTime.Now.AddHours(1),
                 claims: authClaim,
-                signingCredentials: new SigningCredentials(authSignKey, SecurityAlgorithms.HmacSha256));
-
-            return token;
+                signingCredentials: new SigningCredentials(authSignKey, SecurityAlgorithms.HmacSha256)
+            );
         }
 
         // Approve a post request

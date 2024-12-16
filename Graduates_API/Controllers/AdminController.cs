@@ -181,6 +181,8 @@ namespace Graduates_API.Controllers
             // Change status to Approved
             job.REQUIST = true;
 
+            SentEmail(job);
+
             _UnityofWork.ApplicantRepositry.Update(job);
 
             try
@@ -208,6 +210,8 @@ namespace Graduates_API.Controllers
             // Change status to Rejected
             job.REQUIST = false;
 
+            SentEmail(job);
+
             _UnityofWork.ApplicantRepositry.Update(job);
 
             try
@@ -226,14 +230,29 @@ namespace Graduates_API.Controllers
 
 
         [HttpGet("SentEmail")]
-        public IActionResult SentEmail(string email)
+        public IActionResult SentEmail(ApplicantUser obj)
         {
-            var message =
+            if (obj.REQUIST == true)
+            {
+                var message =
                 new Messsage(new string[]
-                { email }, "Confirm", "Account is Approved!");
+                { obj.Email }, "Your Company Registration is Approved",
+                $"Dear [{obj.UserName}],\r\n\r\nWe are pleased to inform you that your company registration has been approved. You can now log in and start using our services." +
+                $"\r\n\r\n[http://localhost:5173/login]\r\n\r\n" +
+                $"Thank you for choosing us.\r\nBest regards,\r\n[{obj.UserName}]");
 
-            _emailService.SendEmail(message);
+                _emailService.SendEmail(message);
+            }
+            else
+            {
+                var message =
+                new Messsage(new string[]
+                { obj.Email }, "Your Company Registration Request",
+                $"Dear [{obj.UserName}],\r\n\r\nWe regret to inform you that your company registration request has been rejected. For more details, please contact our support team: [CareeerPathhub@gmail.com].\r\n\r\nBest regards,\r\n[{obj.UserName}]");
 
+                _emailService.SendEmail(message);
+            }
+            
             return StatusCode(StatusCodes.Status200OK,
             new Respone() { Status = "Succes", Message = "Email Sent Succesfully!" });
         }

@@ -8,7 +8,6 @@ namespace Graduates_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Company")]
     public class JobController : Controller
     {
         public JobController(IUnityofWork UnityofWork)
@@ -75,6 +74,7 @@ namespace Graduates_API.Controllers
         /// </summary>
         /// <param name="ItemDto"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Company")]
         [HttpPost("Add")]
         public async Task<IActionResult> AddItems([FromBody] JobDto ItemDto)
         {
@@ -105,6 +105,7 @@ namespace Graduates_API.Controllers
         /// <param name = "ID" ></ param >
         /// < param name="JobDTO"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Company")]
         [HttpPut("Update")]
         public async Task<IActionResult> UpdateItems(int ID, [FromBody] JobDto JobDTO)
         {
@@ -144,6 +145,7 @@ namespace Graduates_API.Controllers
         /// </summary>
         /// <param name = "ID" ></ param >
         /// < returns ></ returns >
+        [Authorize(Roles = "Company")]
         [HttpDelete("Delete")]
         public async Task<IActionResult> DeleteItems(int ID)
         {
