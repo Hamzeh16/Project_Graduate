@@ -63,13 +63,15 @@ namespace TestRestApi.Controllers
                 }
 
                 // تحديد المسار الذي سيتم تخزين السيرة الذاتية فيه
-                var filePath = Path.Combine(uploadsFolder, registerUser.CompanyId.FileName);
+                var filePath = Path.Combine(uploadsFolder, registerUser.companyId.FileName);
 
                 // تخزين الملف في المجلد
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await registerUser.CompanyId.CopyToAsync(stream);  // نسخ محتويات الملف إلى المجلد
+                    await registerUser.companyId.CopyToAsync(stream);  // نسخ محتويات الملف إلى المجلد
                 }
+
+                var baseUrl = $"{Request.Scheme}://{Request.Host}/uploads/";
 
                 // Add User in database
                 ApplicantUser appUser = new()
@@ -80,7 +82,7 @@ namespace TestRestApi.Controllers
                     //STUDENTID = registerUser.id,
                     APPLICANTTYPE = registerUser.Role,
                     REQUIST = true,
-                    IMAGEURL = filePath
+                    IMAGEURL = baseUrl + registerUser.companyId.FileName
                 };
 
                 // Check If Company

@@ -3,12 +3,12 @@ using Graduates_Service.Services.Dto;
 using Graduates_Service.Services.Repositry.IRepositry;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Graduates_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class AppFormController : Controller
     {
         public AppFormController(IUnityofWork UnityofWork)
@@ -58,14 +58,16 @@ namespace Graduates_API.Controllers
                     await appFormDto.resume.CopyToAsync(stream);  // نسخ محتويات الملف إلى المجلد
                 }
 
+                var baseUrl = $"{Request.Scheme}://{Request.Host}/uploads/";
+
                 // إنشاء الكائن الذي سيتم تخزينه في قاعدة البيانات
                 var item = new ApplicationForm
                 {
-                    YourName = appFormDto.name,
-                    YourEmail = appFormDto.email,
-                    PhoneNumber = appFormDto.phone,
+                    name = appFormDto.name,
+                    email = appFormDto.email,
+                    phone = appFormDto.phone,
                     Address = appFormDto.address,
-                    ImageUrl = filePath,  // تخزين المسار الفعلي للسيرة الذاتية
+                    cv = baseUrl + appFormDto.resume.FileName,  // تخزين المسار الفعلي للسيرة الذاتية
                 };
 
                 // إضافة السجل إلى قاعدة البيانات
@@ -97,9 +99,9 @@ namespace Graduates_API.Controllers
                 return NotFound($"Item id {ID} Not Exist");
             }
 
-            appform.YourName = appFormDto.name;
-            appform.YourEmail = appFormDto.email;
-            appform.PhoneNumber = appFormDto.phone;
+            appform.name = appFormDto.name;
+            appform.email = appFormDto.email;
+            appform.phone = appFormDto.phone;
             appform.Address = appFormDto.address;
             //appform.ImageUrl = appFormDto.resume;
 

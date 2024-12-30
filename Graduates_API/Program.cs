@@ -5,6 +5,7 @@ using Graduates_Service.Services.Repositry.IRepositry;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -121,6 +122,24 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
     });
 }
+
+app.UseStaticFiles(); // يجب أن تكون هذه السطر بعد app.UseRouting()
+
+
+
+// إذا كان لديك مجلد "uploads" في جذر المشروع
+
+app.UseStaticFiles(new StaticFileOptions
+
+{
+
+    FileProvider = new PhysicalFileProvider(
+
+        Path.Combine(Directory.GetCurrentDirectory(), "uploads")),
+
+    RequestPath = "/uploads"
+
+});
 
 app.UseRouting();//*
 

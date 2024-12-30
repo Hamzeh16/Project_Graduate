@@ -145,7 +145,7 @@ namespace Graduates_API.Controllers
         /// </summary>
         /// <param name = "ID" ></ param >
         /// < returns ></ returns >
-        [Authorize(Roles = "Company")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("Delete")]
         public async Task<IActionResult> DeleteItems(int ID)
         {
