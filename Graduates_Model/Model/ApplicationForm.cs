@@ -11,6 +11,8 @@ namespace Graduates_Model.Model
 
         public string? email { get; set; }
 
+        public string? emailCompany { get; set; }
+
         public string? phone { get; set; }
 
         public string? Address { get; set; }

@@ -22,16 +22,24 @@ namespace Graduates_API.Controllers
         /// Get All Data
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
+        //[Authorize(Roles = "Company")]
         public IActionResult GetAllItems()
         {
+            var email = HttpContext.Session.GetString("Email");
             List<ApplicationForm> objList = _UnityofWork.AppFormRepositry.GetAll().ToList();
+            objList = objList.Where(x => x.emailCompany == email).ToList();
             return Ok(objList);
         }
 
+
+        [Authorize]
         [HttpPost("Add")]
         public async Task<IActionResult> AddItems([FromForm] ApplicationFormDto appFormDto)
         {
+            var id = HttpContext.Request.Headers["id"].ToString();
+
             try
             {
                 // التحقق من أن الملف تم استلامه
@@ -60,12 +68,17 @@ namespace Graduates_API.Controllers
 
                 var baseUrl = $"{Request.Scheme}://{Request.Host}/uploads/";
 
+
+                List<Job> applicationForms = _UnityofWork.JobRepositry.GetAll().ToList();
+                var applicationForm = applicationForms.Where(a => a.ID.ToString() == id).FirstOrDefault();
+
                 // إنشاء الكائن الذي سيتم تخزينه في قاعدة البيانات
                 var item = new ApplicationForm
                 {
                     name = appFormDto.name,
                     email = appFormDto.email,
                     phone = appFormDto.phone,
+                    emailCompany = applicationForm.EmailCompany,
                     Address = appFormDto.address,
                     cv = baseUrl + appFormDto.resume.FileName,  // تخزين المسار الفعلي للسيرة الذاتية
                 };

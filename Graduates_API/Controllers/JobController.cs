@@ -25,6 +25,16 @@ namespace Graduates_API.Controllers
         public IActionResult GetJobPosts()
         {
             List<Job> objJobList = _UnityofWork.JobRepositry.GetAll().ToList();
+            var email = HttpContext.Session.GetString("Email");
+            objJobList = objJobList.Where(x => x.EmailCompany == email).ToList();
+            return Ok(objJobList);
+        }
+
+        [HttpGet("GetJobPostsAll")]
+        public IActionResult GetJobPostsAll()
+        {
+            List<Job> objJobList = _UnityofWork.JobRepositry.GetAll().ToList();
+            objJobList = objJobList.Where(x => x.status == "Approved").ToList();
             return Ok(objJobList);
         }
 
@@ -78,6 +88,8 @@ namespace Graduates_API.Controllers
         [HttpPost("Add")]
         public async Task<IActionResult> AddItems([FromBody] JobDto ItemDto)
         {
+            var email = HttpContext.Session.GetString("Email");
+
             var item = new Job
             {
                 Title = ItemDto.title,
@@ -86,13 +98,14 @@ namespace Graduates_API.Controllers
                 Location = ItemDto.location ,
                 EmailJob = ItemDto.email,
                 qualifications = ItemDto.qualifications,
-                ApplicationDeadLine = ItemDto.applicationDeadLine,
+                applicationDeadline = ItemDto.applicationDeadline,
                 Responsibilities= ItemDto.responsibilities,
                 JobType= ItemDto.jobType,
                 formType = ItemDto.formType,
                 status = "Pending",
                 internshipType= ItemDto.internshipType,
                 duration= ItemDto.duration,
+                EmailCompany = email,
             };
             _UnityofWork.JobRepositry.Add(item);
             _UnityofWork.Save();
@@ -129,8 +142,8 @@ namespace Graduates_API.Controllers
                 job.qualifications = JobDTO.qualifications;
             if (JobDTO.responsibilities != null)
                 job.Responsibilities = JobDTO.responsibilities;
-            if (JobDTO.applicationDeadLine != null)
-                job.ApplicationDeadLine = JobDTO.applicationDeadLine;
+            if (JobDTO.applicationDeadline != null)
+                job.applicationDeadline = JobDTO.applicationDeadline;
             if (JobDTO.internshipType != null)
                 job.internshipType = JobDTO.internshipType;
             if (JobDTO.duration != null)

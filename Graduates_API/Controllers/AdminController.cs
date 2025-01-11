@@ -93,7 +93,7 @@ namespace Graduates_API.Controllers
             return Ok(jobs);
         }
 
-        // <summary>
+        /// <summary>
         /// Get All Data
         /// </summary>
         /// <returns></returns>

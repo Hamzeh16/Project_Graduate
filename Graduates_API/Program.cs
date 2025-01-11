@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -61,14 +62,15 @@ builder.Services.AddScoped<IUnityofWork, UnityofWork>();
 
 builder.Services.AddControllers();
 
-// Add CORS policy
+// Add services to the container.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", builder =>
     {
-        builder.WithOrigins("http://localhost:5173") // استبدل بعنوان الـ Frontend
+        builder.WithOrigins("http://localhost:5173") // رابط الواجهة الأمامية
                .AllowAnyHeader()
-               .AllowAnyMethod();
+               .AllowAnyMethod()
+               .AllowCredentials(); // السماح بملفات تعريف الارتباط
     });
 });
 
@@ -110,6 +112,16 @@ builder.Services.AddSwaggerGen(c =>
             });
         });
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.None; // دعم الجلسات عبر المواقع
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // السماح فقط عبر HTTPS
+});
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -126,11 +138,8 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles(); // يجب أن تكون هذه السطر بعد app.UseRouting()
 
 
-
 // إذا كان لديك مجلد "uploads" في جذر المشروع
-
 app.UseStaticFiles(new StaticFileOptions
-
 {
 
     FileProvider = new PhysicalFileProvider(
@@ -141,13 +150,15 @@ app.UseStaticFiles(new StaticFileOptions
 
 });
 
-app.UseRouting();//*
 
-// Use CORS policy
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
 
 app.UseCors("AllowFrontend");
 
-app.UseHttpsRedirection();
+app.UseSession(); // استخدام الجلسة
 
 app.UseAuthentication();
 

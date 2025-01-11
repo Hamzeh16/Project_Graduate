@@ -20,7 +20,7 @@ namespace Graduates_Service.Services.Dto
         public string[]? responsibilities { get; set; }
         public string[]? qualifications { get; set; }
 
-        public DateTime? applicationDeadLine { get; set; }
+        public DateTime? applicationDeadline { get; set; }
 
         public string? internshipType { get; set; }
 

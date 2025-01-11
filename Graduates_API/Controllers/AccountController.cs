@@ -192,37 +192,48 @@ namespace TestRestApi.Controllers
         {
             var user = await _userManager.FindByEmailAsync(loginUser.email);
 
-            if (user == null || !(await _userManager.CheckPasswordAsync(user, loginUser.password)))
+            if (user?.REQUIST == true || user?.REQUIST == null)
             {
-                return Unauthorized(new { Status = "Error", Message = "Invalid email or password" });
-            }
+                if (user == null || !(await _userManager.CheckPasswordAsync(user, loginUser.password)))
+                {
+                    return Unauthorized(new { Status = "Error", Message = "Invalid email or password" });
+                }
 
-            if (user.REQUIST == false || user.REQUIST == null)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden,
-                    new { Status = "Error", Message = "Account is pending approval or not active" });
-            }
+                if (user.REQUIST == false || user.REQUIST == null)
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new { Status = "Error", Message = "Account is pending approval or not active" });
+                }
 
-            var authClaim = new List<Claim>
+                if (user != null)
+                {
+                    // Set session for user's email
+                    //HttpContext.Session.SetString("Email", user.Email);
+                    HttpContext.Session.SetString("Email", user.Email);
+                }
+
+                var authClaim = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
-            var userRole = await _userManager.GetRolesAsync(user);
-            foreach (var role in userRole)
-            {
-                authClaim.Add(new Claim(ClaimTypes.Role, role));
+                var userRole = await _userManager.GetRolesAsync(user);
+                foreach (var role in userRole)
+                {
+                    authClaim.Add(new Claim(ClaimTypes.Role, role));
+                }
+
+                var JwtToken = GetToken(authClaim);
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(JwtToken),
+                    expiration = JwtToken.ValidTo,
+                    role = userRole.FirstOrDefault() // إضافة الدور إلى الاستجابة
+                });
             }
-
-            var JwtToken = GetToken(authClaim);
-
-            return Ok(new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(JwtToken),
-                expiration = JwtToken.ValidTo,
-                role = userRole.FirstOrDefault() // إضافة الدور إلى الاستجابة
-            });
+            return Ok();
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaim)

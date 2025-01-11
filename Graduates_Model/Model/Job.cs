@@ -32,7 +32,7 @@ namespace Graduates_Model.Model
         [StringLength(100)]
         public string[]? qualifications { get; set; }
 
-        public DateTime? ApplicationDeadLine { get; set; }
+        public DateTime? applicationDeadline { get; set; }
 
         [StringLength(50)]
         public string? internshipType { get; set; }
@@ -43,6 +43,7 @@ namespace Graduates_Model.Model
         public string? formType { get; set; }
 
         public string? status { get; set; }
+        public string? EmailCompany { get; set; }
 
     }
 }
