@@ -53,6 +53,37 @@ namespace Graduates_Data.Migrations
                     b.ToTable("ApplicationForms");
                 });
 
+            modelBuilder.Entity("Graduates_Model.Model.Feedback", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Feedbacks");
+                });
+
             modelBuilder.Entity("Graduates_Model.Model.Job", b =>
                 {
                     b.Property<int>("ID")
@@ -197,6 +228,29 @@ namespace Graduates_Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1ca8bc1a-b3af-4cda-814c-59a8ce881a61",
+                            ConcurrencyStamp = "1",
+                            Name = "Admin",
+                            NormalizedName = "Admin"
+                        },
+                        new
+                        {
+                            Id = "b8d330b4-5531-446d-ac8b-33fb472f14b9",
+                            ConcurrencyStamp = "2",
+                            Name = "Company",
+                            NormalizedName = "Company"
+                        },
+                        new
+                        {
+                            Id = "be425fcf-4003-4f68-b208-96bff9039505",
+                            ConcurrencyStamp = "3",
+                            Name = "Student",
+                            NormalizedName = "Student"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

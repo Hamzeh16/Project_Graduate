@@ -54,26 +54,32 @@ namespace TestRestApi.Controllers
                                       new Respone() { Status = "Erorr", Message = "User already exists!" });
                 }
 
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+                string? imageUrl = null;
 
-                // التأكد من أن المجلد موجود
-                if (!Directory.Exists(uploadsFolder))
+                if (registerUser.companyId != null && registerUser.companyId.Length > 0)
                 {
-                    Directory.CreateDirectory(uploadsFolder);
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+
+                    // Ensure the folder exists
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    // Define file path
+                    var filePath = Path.Combine(uploadsFolder, registerUser.companyId.FileName);
+
+                    // Save the file
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await registerUser.companyId.CopyToAsync(stream);
+                    }
+
+                    var baseUrl = $"{Request.Scheme}://{Request.Host}/uploads/";
+                    imageUrl = baseUrl + registerUser.companyId.FileName;
                 }
 
-                // تحديد المسار الذي سيتم تخزين السيرة الذاتية فيه
-                var filePath = Path.Combine(uploadsFolder, registerUser.companyId.FileName);
-
-                // تخزين الملف في المجلد
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await registerUser.companyId.CopyToAsync(stream);  // نسخ محتويات الملف إلى المجلد
-                }
-
-                var baseUrl = $"{Request.Scheme}://{Request.Host}/uploads/";
-
-                // Add User in database
+                // Add user in database
                 ApplicantUser appUser = new()
                 {
                     UserName = registerUser.Name,
@@ -82,8 +88,9 @@ namespace TestRestApi.Controllers
                     //STUDENTID = registerUser.id,
                     APPLICANTTYPE = registerUser.Role,
                     REQUIST = true,
-                    IMAGEURL = baseUrl + registerUser.companyId.FileName
+                    IMAGEURL = imageUrl  // will be null if no file uploaded
                 };
+
 
                 // Check If Company
                 if (appUser.APPLICANTTYPE == "Company")
@@ -230,6 +237,7 @@ namespace TestRestApi.Controllers
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(JwtToken),
                     expiration = JwtToken.ValidTo,
+                    Id = user.Id,
                     role = userRole.FirstOrDefault() // إضافة الدور إلى الاستجابة
                 });
             }

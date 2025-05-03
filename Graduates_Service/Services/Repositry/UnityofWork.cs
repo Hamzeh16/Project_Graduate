@@ -10,8 +10,8 @@ namespace Graduates_Service.Services.Repositry
         public IApplicantRepositry ApplicantRepositry { get; set; }
         public ITraningRepositry TrainingRepositry { get; set; }
         public IJob JobRepositry { get; set; }
-
         public IApplicationForm AppFormRepositry { get; set; }
+        public IFeedbackRepositry FeedbackRepositry { get; set; }
 
         public UnityofWork(AppDbContext db)
         {
@@ -20,6 +20,7 @@ namespace Graduates_Service.Services.Repositry
             TrainingRepositry = new Training(_db);
             JobRepositry = new JobRepositry(_db);
             AppFormRepositry = new ApplicationForms(_db);
+            FeedbackRepositry = new FeedbackRepositry(_db);
         }
         public void Save()
         {

@@ -8,33 +8,38 @@ namespace Graduates_Data.Data
     public class AppDbContext : IdentityDbContext<IdentityUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
+        { 
         }
 
         /// <summary>
         /// Applicant User Table
         /// </summary>
-        public DbSet<ApplicantUser> ApplicantsUser { get; set; }
+        public DbSet<ApplicantUser> ApplicantsUser { get; set; } 
 
         /// <summary>
         /// Traning Table
         /// </summary>
-        public DbSet<Traning> Traning { get; set; }
+        public DbSet<Traning> Traning { get; set; } 
 
         /// <summary>
         /// Job Table
         /// </summary>
-        public DbSet<Job> Job { get; set; }
+        public DbSet<Job> Job { get; set; } 
 
         /// <summary>
         /// Application Form Table
         /// </summary>
-        public DbSet<ApplicationForm> ApplicationForms { get; set; }
+        public DbSet<ApplicationForm> ApplicationForms { get; set; } 
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        /// <summary>
+        /// Feedback Form Table
+        /// </summary>
+        public DbSet<Feedback> Feedbacks { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder) 
         {
             base.OnModelCreating(builder);
-           // SeedRoles(builder);
+            //SeedRoles(builder);
         }
 
         private static void SeedRoles(ModelBuilder builder)
