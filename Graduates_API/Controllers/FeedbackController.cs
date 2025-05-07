@@ -1,6 +1,8 @@
-﻿using Graduates_Model.Model;
+﻿using System.Collections.Generic;
+using Graduates_Model.Model;
 using Graduates_Service.Services.Dto;
 using Graduates_Service.Services.Repositry.IRepositry;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Graduates_API.Controllers
@@ -18,7 +20,7 @@ namespace Graduates_API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetAllFeedback")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetAllFeedback()
         {
             List<Feedback> objList = _UnityofWork.FeedbackRepositry.GetAll().ToList();
@@ -31,6 +33,7 @@ namespace Graduates_API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetALlCompany")]
+        //[Authorize]
         public IActionResult GetALlCompany()
         {
             List<ApplicantUser> objList = _UnityofWork.ApplicantRepositry.GetAll().ToList().Where(x => x.APPLICANTTYPE == "Company").ToList();
@@ -42,16 +45,16 @@ namespace Graduates_API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetFeedbackByID")]
-        //[Authorize(Roles = "Company")]
+        [Authorize(Roles = "Company")]
         public IActionResult GetFeedbackByID(string ID)
         {
-            Feedback? objList = _UnityofWork.FeedbackRepositry.Get(c => c.CompanyId == ID);
+            List<Feedback> objList = _UnityofWork.FeedbackRepositry.GetAll().Where(c => c.CompanyId == ID).ToList();
             return Ok(objList);
         }
 
         [HttpPost("AddFeedback")]
         //[Authorize]
-        public async Task<IActionResult> AddFeedback([FromForm] FeedbackDto feedbackDto)
+        public async Task<IActionResult> AddFeedback([FromBody] FeedbackDto feedbackDto)
         {
             try
             {
@@ -82,7 +85,7 @@ namespace Graduates_API.Controllers
         /// <param name = "ID" ></ param >
         /// < returns ></ returns >
         [HttpDelete("DeleteFeedback")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteFeedback(int ID)
         {
             Feedback? appform = _UnityofWork.FeedbackRepositry.Get(c => c.Id == ID);
